@@ -6,7 +6,7 @@
 /*   By: nzhuzhle <nzhuzhle@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/07 19:29:07 by nzhuzhle          #+#    #+#             */
-/*   Updated: 2023/09/08 21:23:06 by nzhuzhle         ###   ########.fr       */
+/*   Updated: 2023/09/10 19:57:23 by nzhuzhle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,16 +26,16 @@ void	fill_t_pipe(char **argv, t_pipe *info, char *envp[], int i)
 		print_error("Output file descriptor", 0, info);
 	while (envp[++i])
 	{
-		if (ft_strcmp(envp[i], "PATH=", 5) == 0)
+		if (ft_strncmp(envp[i], "PATH=", 5) == 0)
 		{
-			info -> paths = ft_split(envp[i] + 5, ':');
+			info -> paths = ft_split(info, envp[i] + 5, ':', -1);
 			break ;
 		}
 	}
-/*	if (!info->paths) // do I need it?
-		info -> paths = ft_split("/usr/gnu/bin:/usr/local/bin:/bin:/usr/bin:", ':');*/
-	info -> in_args = argv[2];
-	info -> out_args = argv[3];
+	if (!info->paths)
+		info -> paths = ft_split(info, DEFPATH, ':', -1);
+	info -> in_args = ft_trim(argv[2]);
+	info -> out_args = ft_trim(argv[3]);
 }
 
 int	main(int argc, char **argv, char *envp[])
