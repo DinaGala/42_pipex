@@ -22,6 +22,7 @@
 # include <string.h>
 # include <fcntl.h>
 # include <errno.h>
+# include "libft/libft.h"
 
 # define DEFPATH "/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/go/bin:/usr/local/munki"
 
@@ -44,10 +45,10 @@ void	parent_process(char *envp[], t_pipe *info, int fd[]);
 void    child_process(char *envp[], t_pipe *info, int fd[]);
 
 /***** aux.c - */
-int ft_strlen(char *s);
-int	ft_strcmp(char *envp, char *path, int len); 
+
+//int	ft_strcmp_pipe(char *envp, char *path, int len); 
 int count_words(char *s, char c);
-char    *ft_substr(char *s, int start, int len, int flag); // flag is 0 - I add / in the end of the path
+char    *ft_substr_pipe(char *s, int start, int len, int flag); // flag is 0 - I add / in the end of the path
 void    ft_free(char **arr, int n); //if n= -1 - i free until NULL
 /********************************/
 
@@ -63,6 +64,7 @@ char	*check_access(char **paths, char *cmd) //USES STRJOIN, strchr compile with 
 /***** parsing.c - */
 char    **ft_split_path(t_pipe info, char *s, char c, int i);
 char    **ft_split_cmd(t_pipe info, char *s, char c, int i); // change it add all the quotes hell
+char	**ft_split_quotes(info, s, first, -1);
 //int count_cmd(char *s);
 
 #endif

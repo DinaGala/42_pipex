@@ -69,8 +69,10 @@ void	parse_all(char **argv, t_pipe *info, char *envp[], int i)
 	char	**paths;
 
 	initialize_tpipe(info);
-	info -> in_cmd = ft_split_cmd(info, argv[2], ' ', -1);
-	info -> out_cmd = ft_split_cmd(info, argv[3], ' ', -1);
+//	info -> in_cmd = ft_split_cmd(info, argv[2], ' ', -1); //you can send here to the decision maker
+//	info -> out_cmd = ft_split_cmd(info, argv[3], ' ', -1);
+	info -> in_cmd = decision_maker(info, argv[2], -1);
+	info -> out_cmd = decision_maker(info, argv[3], -1);
 	while (envp[++i])
 	{
 		if (ft_strncmp(envp[i], "PATH=", 5) == 0)

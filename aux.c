@@ -12,17 +12,7 @@
 
 #include "pipex.h"
 
-int	ft_strlen(char *s)
-{
-	int	len;
-
-	len = 0;
-	while (*(s++))
-		len++;
-	return (len);
-}
-
-int	ft_strncmp(char *envp, char *path, int n)
+/*int	ft_strncmp_pipe(char *envp, char *path, int n)
 {
 	int			i;
 
@@ -32,7 +22,7 @@ int	ft_strncmp(char *envp, char *path, int n)
 	while ((s1[i] && s2[i]) && s1[i] == s2[i] && i < n - 1)
 			i++;
 	return ((unsigned char)s1[i] - (unsigned char)s2[i]);
-}
+}*/
 
 int	count_words(char *s, char c)
 {
@@ -50,7 +40,7 @@ int	count_words(char *s, char c)
 	return (count);
 }
 
-char	*ft_substr(char *s, int start, int len, int flag)
+char	*ft_substr_pipe(char *s, int start, int len, int flag)
 {
 	char	*m;
 	int		i;
