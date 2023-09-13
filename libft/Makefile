@@ -6,14 +6,14 @@
 #    By: nzhuzhle <nzhuzhle@student.42barcel>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/26 18:10:18 by nzhuzhle          #+#    #+#              #
-#    Updated: 2023/05/16 19:51:32 by nzhuzhle         ###   ########.fr        #
+#    Updated: 2023/09/13 18:21:49 by nzhuzhle         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 HEADER = libft.h
 NAME = libft.a
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -MDD -I ./
+CFLAGS = -Wall -Wextra -Werror -MMD -I ./
 
 SRCS = ft_isalpha.c ft_isdigit.c ft_isalnum.c ft_isascii.c ft_isprint.c \
 	   ft_toupper.c ft_tolower.c ft_strchr.c ft_strrchr.c ft_strnstr.c \

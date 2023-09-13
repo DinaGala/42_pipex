@@ -6,18 +6,18 @@
 /*   By: nzhuzhle <nzhuzhle@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/07 19:29:07 by nzhuzhle          #+#    #+#             */
-/*   Updated: 2023/09/11 23:09:31 by nzhuzhle         ###   ########.fr       */
+/*   Updated: 2023/09/13 18:34:49 by nzhuzhle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-void	parent_process(char *envp[], t_pipe *info, int fd[])
+void	parent_process(char *envp[], char *argv, t_pipe *info, int fd[])
 {
 	close(fd[1]);
-	info -> out_fd = open(argv[4], O_TRUNC | O_CREAT | O_RDWR, 0644);
+	info -> out_fd = open(argv, O_TRUNC | O_CREAT | O_RDWR, 0644);
 	if (info -> out_fd == -1)
-		print_error(argv[4], 0, info);
+		print_error(argv, 0, info);
 	if (dup2(info->out_fd, STDOUT_FILENO) < 0)
 	{
 		close(info->out_fd);
@@ -31,12 +31,12 @@ void	parent_process(char *envp[], t_pipe *info, int fd[])
 		print_error("cmd2", 0, info);
 }
 
-void	child_process(char *envp[], t_pipe *info, int fd[])
+void	child_process(char *envp[], char *argv, t_pipe *info, int fd[])
 {
 	close(fd[0]);
-	info -> in_fd = open(argv[1], O_RDONLY);
+	info -> in_fd = open(argv, O_RDONLY);
 	if (info -> in_fd == -1)
-		print_error(argv[1], 0, info);
+		print_error(argv, 0, info);
 	if (dup2(info->in_fd, 0) < 0)
 	{
 		close(info -> in_fd);
@@ -68,6 +68,7 @@ void	parse_all(char **argv, t_pipe *info, char *envp[], int i)
 {
 	char	**paths;
 
+	paths = NULL;
 	initialize_tpipe(info);
 //	info -> in_cmd = ft_split_cmd(info, argv[2], ' ', -1); //you can send here to the decision maker
 //	info -> out_cmd = ft_split_cmd(info, argv[3], ' ', -1);
@@ -77,16 +78,16 @@ void	parse_all(char **argv, t_pipe *info, char *envp[], int i)
 	{
 		if (ft_strncmp(envp[i], "PATH=", 5) == 0)
 		{
-			paths = ft_split(info, envp[i] + 5, ':', -1);
+			paths = ft_split_path(info, envp[i] + 5, ':', -1);
 			break ;
 		}
 	}
 	if (!paths)
-		paths = ft_split(info, DEFPATH, ':', -1);
+		paths = ft_split_path(info, DEFPATH, ':', -1);
 	check_paths(info, paths);
-	ft_free(paths, -1)
+	ft_free(paths, -1);
 	if (!info->path1 || !info->path2)
-		print_error("access", 127, info)
+		print_error("access", 127, info);
 }
 
 int	main(int argc, char **argv, char *envp[])
@@ -95,6 +96,7 @@ int	main(int argc, char **argv, char *envp[])
 	int		fd[2];
 	int		pid;
 
+	info = NULL;
 	if (argc != 5)
 		print_error("invalid arguments: Introduce 4 arguments\n", 22, info);
 	info = malloc(sizeof(t_pipe));
@@ -107,9 +109,9 @@ int	main(int argc, char **argv, char *envp[])
 	if (pid < 0)
 		print_error("fork", 0, info);
 	if (pid == 0)
-		child_process(envp, info, fd);
+		child_process(envp, argv[1], info, fd);
 	else
-		parent_process(envp, info, fd);
+		parent_process(envp, argv[4], info, fd);
 	waitpid(pid, NULL, 0);
 	clean_up(info);
 	return (0);

@@ -6,7 +6,7 @@
 /*   By: nzhuzhle <nzhuzhle@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/11 22:04:32 by nzhuzhle          #+#    #+#             */
-/*   Updated: 2023/09/11 22:12:25 by nzhuzhle         ###   ########.fr       */
+/*   Updated: 2023/09/13 16:42:39 by nzhuzhle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ char	**ft_split_path(t_pipe info, char *s, char c, int i)
 			start = i;
 		if (s[i] != c && (s[i + 1] == c || s[i + 1] == '\0'))
 		{
-			arr[++n] = ft_substr(s, start, (i - start + 2), 0);// i added + 2 to add the /
+			arr[++n] = ft_substr_path(s, start, (i - start + 1));
 			if (!arr[n] && n > 0)
 			{
 				ft_free(arr, n);
@@ -39,7 +39,7 @@ char	**ft_split_path(t_pipe info, char *s, char c, int i)
 	return (arr);
 }
 
-char	**ft_split_cmd(t_pipe info, char *s, int i)
+char	**ft_split_cmd(t_pipe info, char *s, char c, int i)
 {
 	char	**arr;
 	int		n;
@@ -55,7 +55,7 @@ char	**ft_split_cmd(t_pipe info, char *s, int i)
 			start = i;
 		if (s[i] != c && (s[i + 1] == c || s[i + 1] == '\0'))
 		{
-			arr[++n] = ft_substr(s, start, (i - start + 1), 1);
+			arr[++n] = ft_substr(s, start, (i - start + 1));
 			if (!arr[n] && n > 0)
 			{
 				ft_free(arr, n);
@@ -66,5 +66,69 @@ char	**ft_split_cmd(t_pipe info, char *s, int i)
 	return (arr);
 }
 
-int	count_cmd(char *s)
+char	**ft_split_quotes(t_pipe info, char *s, char c, int i)
 {
+	char	**arr;
+	int		n;
+	int		start;
+	int		len;
+
+	n = -1;
+	arr = (char **) malloc((count_cmd(s) + 1) * sizeof(char *));
+	if (arr == 0)
+		print_error("malloc", 0, info);
+	while (*s && s[++i])
+	{
+		if (s[i] != ' ' && i == 0)
+			start = i;
+		if (s[i] != ' ' && (s[i + 1] == ' ' || !s[i + 1]))
+		{
+			arr[++n] = ft_substr(s, start, (i - start + 1));
+			if (!arr[n] && n > 0)
+			{
+				ft_free(arr, n);
+				print_error("malloc", 0, info);
+			}
+			start = i; // what to do with the start
+		}
+		else if (s[i] == ' ' && s[i + 1] == c)
+		{
+			start = ++i;
+			while (s[i] && s[i + 1] != c)
+				i++;
+			arr[++n] = ft_substr(s, start, (i - start + 1));
+			if (!arr[n] && n > 0)
+			{
+				ft_free(arr, n);
+				print_error("malloc", 0, info);
+			}
+			start = i;
+		}
+	}
+	arr[++n] = NULL;
+	return (arr);
+}
+
+int	count_cmd(char *s, char c)
+{
+	int	i;
+	int	count;
+
+	i = 0;
+	count = 0;
+	while (s[i])
+	{
+		if (s[i] != ' ' && (s[i + 1] == ' ' || !s[i + 1]))
+			count++;
+		else if (s[i] == ' ' && s[i + 1] == c)
+		{
+			i++;
+			while (s[i] && s[i + 1] != c)
+		   		i++;
+			if (!s[i])
+				return (count);
+		}
+		i++;
+	}
+	return (count);
+}

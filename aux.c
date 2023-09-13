@@ -6,7 +6,7 @@
 /*   By: nzhuzhle <nzhuzhle@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/08 19:58:30 by nzhuzhle          #+#    #+#             */
-/*   Updated: 2023/09/11 22:48:02 by nzhuzhle         ###   ########.fr       */
+/*   Updated: 2023/09/13 18:28:19 by nzhuzhle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,13 +40,13 @@ int	count_words(char *s, char c)
 	return (count);
 }
 
-char	*ft_substr_pipe(char *s, int start, int len, int flag)
+char	*ft_substr_path(char *s, int start, int len)
 {
 	char	*m;
 	int		i;
 
 	i = 0;
-	m = (char *) malloc(len + 1);
+	m = (char *) malloc(len + 2);
 	if (m == 0)
 		return (NULL);
 	while (i < len && s[i + start])
@@ -54,12 +54,8 @@ char	*ft_substr_pipe(char *s, int start, int len, int flag)
 		m[i] =s[i + start];
 		i++;
 	}
-	if (flag == 0)
-	{	
-		m[i] = '/';
-		i++;
-	}
-	m[i] = '\0';
+	m[i] = '/';
+	m[i + 1] = '\0';
 	return (m);
 }
 
@@ -76,4 +72,36 @@ void	ft_free(char **arr, int n)
 	}
 	free(arr);
 	arr = NULL;
+}
+
+char	**decision_maker(t_pipe *info, char *s, int i)
+{
+	int	sing;
+	int	doub;
+	char	first; // if it is 0 - no quotes, 1 - single is first, 2 - double, -1 - there are unclosed quotes
+
+	first = '\0';
+	sing = 0;
+	doub = 0;
+	while (s[++i])
+	{
+		if (s[i] == '\'')
+		{
+			if (!first)
+				first = '\'';
+			sing++;
+		}
+		if (s[i] == '\"')
+		{
+			if (!first)
+				first = '\"';
+			doub++;
+		}
+	}
+	if ((doub % 2) != 0 || (sing % 2) != 0)
+		print_error("non terminated string", 2, info);
+	else if (first == 0)
+		return (ft_split_cmd(info, s, -1));
+	else
+		return (ft_split_quotes(info, s, first, -1));
 }

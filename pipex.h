@@ -6,7 +6,7 @@
 /*   By: nzhuzhle <nzhuzhle@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/06 17:38:32 by nzhuzhle          #+#    #+#             */
-/*   Updated: 2023/09/11 23:09:24 by nzhuzhle         ###   ########.fr       */
+/*   Updated: 2023/09/13 18:32:51 by nzhuzhle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,11 +41,11 @@ typedef struct s_struct
 // main
 void	parse_all(char **argv, t_pipe *info, char *envp[], int i);// - i is a counter. 
 void	check_paths(t_pipe *info, char **paths); //USES STRJOIN, strchr compile with libft. checks the scripts
-void	parent_process(char *envp[], t_pipe *info, int fd[]);
-void    child_process(char *envp[], t_pipe *info, int fd[]);
+void	parent_process(char *envp[], char *argv, t_pipe *info, int fd[]);
+void    child_process(char *envp[], char *argv, t_pipe *info, int fd[]);
 
 /***** aux.c - */
-
+char	**decision_maker(t_pipe *info, char *s, int i);
 //int	ft_strcmp_pipe(char *envp, char *path, int len); 
 int count_words(char *s, char c);
 char    *ft_substr_pipe(char *s, int start, int len, int flag); // flag is 0 - I add / in the end of the path
@@ -56,15 +56,15 @@ void    ft_free(char **arr, int n); //if n= -1 - i free until NULL
 int print_error(char *message, int flag, t_pipe *info); //- function that uses perror to display error message and type, or (if flag is 1) write for indefined errors, cleans info if needed. returns (1) - error exit for main
 void    initialize_tpipe(t_pipe *info);
 void    clean_up(t_pipe *info); // check if i should allocate the cmd
-char	*check_access(char **paths, char *cmd) //USES STRJOIN, strchr compile with libft
+char	*check_access(char **paths, char *cmd); //USES STRJOIN, strchr compile with libft
 
 //char	*ft_trim(char *cmd); //trims \ " ' 
 
 
 /***** parsing.c - */
-char    **ft_split_path(t_pipe info, char *s, char c, int i);
-char    **ft_split_cmd(t_pipe info, char *s, char c, int i); // change it add all the quotes hell
-char	**ft_split_quotes(info, s, first, -1);
-//int count_cmd(char *s);
+char    **ft_split_path(t_pipe *info, char *s, char c, int i);
+//char    **ft_split_cmd(t_pipe *info, char *s, char c, int i); // change it add all the quotes hell
+//char	**ft_split_quotes(info, s, first, -1);
+int count_cmd(char *s, char c);
 
 #endif
