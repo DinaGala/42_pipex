@@ -95,9 +95,11 @@ char	**decision_maker(t_pipe *info, char *s, int i)
 	doub = 0;
 	while (s[++i])
 	{
-		if (s[i] == '\'')
+		if ((s[i] == '\'' && i == 0) || (s[i] == '\'' && s[i + 1] == ' ') || \
+		(s[i] == '\'' && s[i - 1] == ' '))
 			sing++;
-		if (s[i] == '\"')
+		if ((s[i] == '\"' && i == 0) || (s[i] == '\"' && s[i + 1] == ' ') || \
+		(s[i] == '\"' && s[i - 1] == ' '))
 			doub++;
 		if (!first && (s[i] == '\'' || s[i] == '\"'))
 				first = s[i];
@@ -107,6 +109,6 @@ char	**decision_maker(t_pipe *info, char *s, int i)
 	else if (!first)
 		return (ft_split_cmd(info, s, ' ', -1));
 	else
-		return (ft_split_cmd(info, s, ' ', -1)); //return (ft_split_quotes(info, s, first, -1));
+		return (ft_split_quotes(info, s, first, -1)); //return (ft_split_quotes(info, s, first, -1));
 	return (NULL);
 }

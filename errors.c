@@ -42,10 +42,10 @@ void	clean_up(t_pipe *info)
 	printf("I'm in the clean up %d\n", 1); //erase
 	if (info && info->path1 != NULL)
 		free(info->path1);
-	printf("after path1 %d\n", 2); //erase
+//	printf("after path1 %d\n", 2); //erase
 	if (info && info -> path2)
 		free(info->path2);
-	printf("after path2 %d\n", 3); //erase
+//	printf("after path2 %d\n", 3); //erase
 	if (info && info -> in_cmd)
 		ft_free(info -> in_cmd, -1);
 	if (info && info -> out_cmd)
@@ -82,10 +82,11 @@ char	*check_access(char **paths, char *cmd, t_pipe *info)
 			}
 			else
 			{
-				printf("getting away from check access, path %s\n", paths[i]); //erase
+				printf("getting away from check access, path %s\n", p); //erase
 				return (p);
 			}
 		}
 	}
+	printf("getting away from check access with NULL %s\n", NULL); //erase
 	return (NULL);
 }
