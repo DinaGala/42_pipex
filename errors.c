@@ -6,7 +6,7 @@
 /*   By: nzhuzhle <nzhuzhle@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/08 17:06:53 by nzhuzhle          #+#    #+#             */
-/*   Updated: 2023/09/11 23:09:28 by nzhuzhle         ###   ########.fr       */
+/*   Updated: 2023/09/14 17:34:12 by nzhuzhle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,16 +33,19 @@ void	initialize_tpipe(t_pipe *info)
 	info -> out_fd = -1;
 	info -> path1 = NULL;
 	info -> path2 = NULL;
-	info -> in_args = NULL;
-	info -> out_args = NULL;
+	info -> in_cmd = NULL;
+	info -> out_cmd = NULL;
 }
 
 void	clean_up(t_pipe *info)
 {
-	if (info && info -> path1)
+	printf("I'm in the clean up %d\n", 1); //erase
+	if (info && info->path1 != NULL)
 		free(info->path1);
+	printf("after path1 %d\n", 2); //erase
 	if (info && info -> path2)
 		free(info->path2);
+	printf("after path2 %d\n", 3); //erase
 	if (info && info -> in_cmd)
 		ft_free(info -> in_cmd, -1);
 	if (info && info -> out_cmd)
@@ -51,20 +54,25 @@ void	clean_up(t_pipe *info)
 	info = NULL;
 }
 
-char	*check_access(char **paths, char *cmd)
+char	*check_access(char **paths, char *cmd, t_pipe *info)
 {
 	char	*p;
 	int		i;
 
 	i = -1;
-	while (paths[++i] || !(*thepath))
+
+	while (paths[++i])
 	{
-		p = strjoin(paths[i], cmd);
+		printf("check access, path %s\n", paths[i]); //erase
+		p = ft_strjoin(paths[i], cmd);
+		printf("check access, path+cmd %s\n", p); //erase
 		if (!p)
 		{
 			ft_free(paths, -1);
 			print_error("malloc", 0, info);
 		}
+		printf("check access, access F %i -- accessX %i\n", access(p, F_OK), access(p, X_OK)); //erase
+		printf("check access, p is %s\n", p); //erase
 		if (access(p, F_OK) == 0)
 		{
 			if(access(p, X_OK) != 0)
@@ -73,7 +81,10 @@ char	*check_access(char **paths, char *cmd)
 				print_error("access", 0, info);
 			}
 			else
-				return (paths[i]);
+			{
+				printf("getting away from check access, path %s\n", paths[i]); //erase
+				return (p);
+			}
 		}
 	}
 	return (NULL);

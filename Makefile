@@ -6,7 +6,7 @@
 #    By: nzhuzhle <nzhuzhle@student.42barcel>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/06 17:34:16 by nzhuzhle          #+#    #+#              #
-#    Updated: 2023/09/06 17:34:23 by nzhuzhle         ###   ########.fr        #
+#    Updated: 2023/09/14 17:47:39 by nzhuzhle         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@ NAME = pipex
 CC = cc
 FLAGS = -Wall -Wextra -Werror -MMD -I ./
 
-SRC = pipex.c aux.c
+SRC = pipex.c aux.c errors.c parsing.c
 OBJ = $(SRC:.c=.o)
 DEPS = $(SRC:.c=.d)
 SRC_LIBFT = ./libft/libft.a
@@ -30,7 +30,7 @@ make_lib:
 
 -include $(DEPS)
 $(NAME): $(OBJ) $(SRC_LIBFT)
-	$(CC) $(FLAGS) $(OBJ) -o $(NAME)
+	$(CC) $(FLAGS) $(OBJ) $(SRC_LIBFT) -o $(NAME)
 
 clean:
 	rm -f $(OBJ) $(DEPS)

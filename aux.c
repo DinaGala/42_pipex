@@ -6,7 +6,7 @@
 /*   By: nzhuzhle <nzhuzhle@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/08 19:58:30 by nzhuzhle          #+#    #+#             */
-/*   Updated: 2023/09/13 18:28:19 by nzhuzhle         ###   ########.fr       */
+/*   Updated: 2023/09/14 17:39:58 by nzhuzhle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,18 +44,28 @@ char	*ft_substr_path(char *s, int start, int len)
 {
 	char	*m;
 	int		i;
+//	int		count;
 
 	i = 0;
+//	count = ft_strlen(s);
+//	if (start > count)
+//		len = 0;
+//	else if (count - start < len)
+//		len = count - start;
 	m = (char *) malloc(len + 2);
 	if (m == 0)
 		return (NULL);
-	while (i < len && s[i + start])
+//	printf("substring path, len %i\n", len);// erase
+	while (i < len)
 	{
-		m[i] =s[i + start];
+		m[i] = s[i + start];
+//		printf("substring path, mi %c\n", m[i]); //erase
 		i++;
 	}
+//	printf("substring path, m %s\n", m); //erase
 	m[i] = '/';
 	m[i + 1] = '\0';
+//	printf("substring path, m %s\n", m); //erase
 	return (m);
 }
 
@@ -86,22 +96,17 @@ char	**decision_maker(t_pipe *info, char *s, int i)
 	while (s[++i])
 	{
 		if (s[i] == '\'')
-		{
-			if (!first)
-				first = '\'';
 			sing++;
-		}
 		if (s[i] == '\"')
-		{
-			if (!first)
-				first = '\"';
 			doub++;
-		}
+		if (!first && (s[i] == '\'' || s[i] == '\"'))
+				first = s[i];
 	}
 	if ((doub % 2) != 0 || (sing % 2) != 0)
 		print_error("non terminated string", 2, info);
-	else if (first == 0)
-		return (ft_split_cmd(info, s, -1));
+	else if (!first)
+		return (ft_split_cmd(info, s, ' ', -1));
 	else
-		return (ft_split_quotes(info, s, first, -1));
+		return (ft_split_cmd(info, s, ' ', -1)); //return (ft_split_quotes(info, s, first, -1));
+	return (NULL);
 }
