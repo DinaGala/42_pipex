@@ -31,6 +31,7 @@ void	initialize_tpipe(t_pipe *info)
 {
 	info -> in_fd = -1;
 	info -> out_fd = -1;
+	info -> paths = NULL;
 	info -> path1 = NULL;
 	info -> path2 = NULL;
 	info -> in_cmd = NULL;
@@ -39,7 +40,7 @@ void	initialize_tpipe(t_pipe *info)
 
 void	clean_up(t_pipe *info)
 {
-	printf("I'm in the clean up %d\n", 1); //erase
+//	printf("I'm in the clean up %d\n", 1); //erase
 	if (info && info->path1 != NULL)
 		free(info->path1);
 //	printf("after path1 %d\n", 2); //erase
@@ -61,18 +62,23 @@ char	*check_access(char **paths, char *cmd, t_pipe *info)
 
 	i = -1;
 
+//	while (paths[++i])
+//	{
+//		printf("what s in the path %i -- %s\n", i, paths[i]); //erase
+//	}
+//	i = -1;
 	while (paths[++i])
 	{
-		printf("check access, path %s\n", paths[i]); //erase
+	//	printf("check access, path %i -- %s\n", i, paths[i]); //erase
 		p = ft_strjoin(paths[i], cmd);
-		printf("check access, path+cmd %s\n", p); //erase
+	//	printf("check access, path+cmd %s\n", p); //erase
 		if (!p)
 		{
 			ft_free(paths, -1);
 			print_error("malloc", 0, info);
 		}
-		printf("check access, access F %i -- accessX %i\n", access(p, F_OK), access(p, X_OK)); //erase
-		printf("check access, p is %s\n", p); //erase
+	//	printf("check access, access F %i -- accessX %i\n", access(p, F_OK), access(p, X_OK)); //erase
+	//	printf("check access, p is %s\n", p); //erase
 		if (access(p, F_OK) == 0)
 		{
 			if(access(p, X_OK) != 0)
@@ -82,11 +88,12 @@ char	*check_access(char **paths, char *cmd, t_pipe *info)
 			}
 			else
 			{
-				printf("getting away from check access, path %s\n", p); //erase
+				//printf("getting away from check access, path %s\n", p); //erase
 				return (p);
 			}
 		}
 	}
-	printf("getting away from check access with NULL %s\n", NULL); //erase
+//	printf("getting away from check access with NULL %s\n", NULL); //erase
+	print_error(ft_strjoin(cmd, ": command not found\n"), 127, info);
 	return (NULL);
 }

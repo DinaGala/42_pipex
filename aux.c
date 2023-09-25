@@ -84,29 +84,30 @@ void	ft_free(char **arr, int n)
 	arr = NULL;
 }
 
+// the dicision maker doesn't care avout scripts
 char	**decision_maker(t_pipe *info, char *s, int i)
 {
 	int	sing;
-	int	doub;
+//	int	doub;
 	char	first; // if it is 0 - no quotes, 1 - single is first, 2 - double, -1 - there are unclosed quotes
 
 	first = '\0';
 	sing = 0;
-	doub = 0;
+//	doub = 0;
 	while (s[++i])
 	{
-		if ((s[i] == '\'' && i == 0) || (s[i] == '\'' && s[i + 1] == ' ') || \
-		(s[i] == '\'' && s[i - 1] == ' '))
+		if (s[i] == '\'' || s[i] == '\"')
 			sing++;
-		if ((s[i] == '\"' && i == 0) || (s[i] == '\"' && s[i + 1] == ' ') || \
-		(s[i] == '\"' && s[i - 1] == ' '))
-			doub++;
+	//	if ((s[i] == '\"' && i == 0) || (s[i] == '\"' && s[i + 1] == ' ') || \
+	//	(s[i] == '\"' && s[i - 1] == ' '))
+	//		doub++;
 		if (!first && (s[i] == '\'' || s[i] == '\"'))
 				first = s[i];
 	}
-	if ((doub % 2) != 0 || (sing % 2) != 0)
-		print_error("non terminated string", 2, info);
-	else if (!first)
+//	printf("quotes: %i\n", sing);//erase
+//	if (sing % 2 != 0)
+//		print_error("non terminated string", 2, info);
+	if (!first)
 		return (ft_split_cmd(info, s, ' ', -1));
 	else
 		return (ft_split_quotes(info, s, first, -1)); //return (ft_split_quotes(info, s, first, -1));

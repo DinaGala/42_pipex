@@ -44,7 +44,7 @@ char	**ft_split_path(t_pipe *info, char *s, char c, int i)
 		}
 	}
 	arr[++n] = NULL;
-	printf("split path, last part %s\n", arr[n]); //erase
+//	printf("split path, last part %s\n", arr[n]); //erase
 	return (arr);
 }
 
@@ -89,7 +89,7 @@ char	**ft_split_quotes(t_pipe *info, char *s, char c, int i)
 
 	n = -1;
 	arr = (char **) malloc((count_cmd(s, c) + 1) * sizeof(char *));
-	printf("I'm in the split quotes %d\n", count_cmd(s, c)); //erase
+	//printf("I'm in the split quotes %d\n", count_cmd(s, c)); //erase
 	if (arr == 0)
 		print_error("malloc", 0, info);
 	flag = 0;
@@ -105,11 +105,11 @@ char	**ft_split_quotes(t_pipe *info, char *s, char c, int i)
 			start = i;
 		else if (s[i] != ' ' && !flag && i > 0 && s[i - 1] == ' ')
 			start = i;
-		printf("start is %d\n", start); //erase
+//		printf("start is %d\n", start); //erase
 		if ((s[i] != ' ' && (s[i + 1] == ' ' || !s[i + 1]) && flag == 0) || \
 		(s[i] == c && (s[i + 1] == ' ' || !s[i + 1]) && flag == 1))
 		{
-			printf("flag is %d\n", flag); //erase
+//			printf("flag is %d\n", flag); //erase
 			if (flag == 1)
 				arr[++n] = ft_substr(s, start, (i - start));
 			else
@@ -121,11 +121,11 @@ char	**ft_split_quotes(t_pipe *info, char *s, char c, int i)
 			}
 			if (flag == 1)
 				flag = 0;
-			printf("part: %s\n", arr[n]); //erase
+	//		printf("part: %s\n", arr[n]); //erase
 		}
 	}
 	arr[++n] = NULL;
-	printf("salgo de split quotes: %s\n", arr[n]); //erase
+	//printf("salgo de split quotes: %s\n", arr[n]); //erase
 	return (arr);
 }
 

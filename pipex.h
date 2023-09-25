@@ -30,7 +30,7 @@ typedef struct s_struct
 {
 	int     in_fd;
 	int     out_fd;
-//	char	**paths;
+	char	**paths;
 	char	*path1;
 	char	*path2;
 	char	**in_cmd;
@@ -40,7 +40,7 @@ typedef struct s_struct
 /***** pipex.c - main, pipex and child/parent processes *****/
 // main
 void	parse_all(char **argv, t_pipe *info, char *envp[], int i);// - i is a counter. 
-void	check_paths(t_pipe *info, char **paths); //USES STRJOIN, strchr compile with libft. checks the scripts
+void	check_paths(t_pipe *info, char **cmd, char **path); //USES STRJOIN, strchr compile with libft. checks the scripts
 void	parent_process(char *envp[], char *argv, t_pipe *info, int fd[]);
 void    child_process(char *envp[], char *argv, t_pipe *info, int fd[]);
 
