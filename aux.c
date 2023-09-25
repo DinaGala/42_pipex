@@ -104,6 +104,7 @@ char	**decision_maker(t_pipe *info, char *s, int i)
 		if (!first && (s[i] == '\'' || s[i] == '\"'))
 				first = s[i];
 	}
+//	printf("first is: %c\n", first);//erase
 //	printf("quotes: %i\n", sing);//erase
 //	if (sing % 2 != 0)
 //		print_error("non terminated string", 2, info);

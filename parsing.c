@@ -107,13 +107,13 @@ char	**ft_split_quotes(t_pipe *info, char *s, char c, int i)
 			start = i;
 //		printf("start is %d\n", start); //erase
 		if ((s[i] != ' ' && (s[i + 1] == ' ' || !s[i + 1]) && flag == 0) || \
-		(s[i] == c && (s[i + 1] == ' ' || !s[i + 1]) && flag == 1))
+		(s[i] == c && (s[i + 1] == ' ' || !s[i + 1]) && flag == 1 && s[i - 1] != '\\'))
 		{
-//			printf("flag is %d\n", flag); //erase
+		//	printf("flag is %d\n", flag); //erase
 			if (flag == 1)
-				arr[++n] = ft_substr(s, start, (i - start));
+				arr[++n] = ft_substr_slash(s, start, (i - start));
 			else
-				arr[++n] = ft_substr(s, start, (i - start + 1));
+				arr[++n] = ft_substr_slash(s, start, (i - start + 1));
 			if (!arr[n] && n > 0)
 			{
 				ft_free(arr, n);
@@ -121,7 +121,7 @@ char	**ft_split_quotes(t_pipe *info, char *s, char c, int i)
 			}
 			if (flag == 1)
 				flag = 0;
-	//		printf("part: %s\n", arr[n]); //erase
+		//	printf("part: %s\n", arr[n]); //erase
 		}
 	}
 	arr[++n] = NULL;

@@ -20,7 +20,7 @@ void	parent_process(char *envp[], char *argv, t_pipe *info, int fd[])
 	if (info -> out_fd == -1)
 	{
 	//	print_error(argv, -1, info);
-		print_error(argv, 0, info);
+		print_error(strerror(1), 1, info);
 	}
 	check_paths(info, info->out_cmd, &(info->path2));
 //	printf("parent after checking path: %s\n", info->path2); //erase
@@ -74,7 +74,7 @@ void	check_paths(t_pipe *info, char **cmd, char **path)
 {
 	//first checking the scripts
 //	printf("entering checking path: %s\n", *path); //erase
-	if (cmd[0][0] == '.' && cmd[0][1] == '/')
+	if ((cmd[0][0] == '.' && cmd[0][1] == '/'))
 		*path = ft_strdup(cmd[0]);//crazy stuff
 	else
 		*path = ft_strdup(check_access(info->paths, cmd[0], info));
@@ -89,8 +89,6 @@ void	check_paths(t_pipe *info, char **cmd, char **path)
 
 void	parse_all(char **argv, t_pipe *info, char *envp[], int i)
 {
-//	char	**paths;
-
 //	paths = NULL;
 	initialize_tpipe(info);
 //	info -> in_cmd = ft_split_cmd(info, argv[2], ' ', -1); //you can send here to the decision maker
@@ -98,6 +96,23 @@ void	parse_all(char **argv, t_pipe *info, char *envp[], int i)
 //	printf("entering parsing: %s\n", argv[1]); //erase
 	info -> in_cmd = decision_maker(info, argv[2], -1);
 	info -> out_cmd = decision_maker(info, argv[3], -1);
+//	trim_slashes(info, -1);
+/*	while (info->in_cmd[++i])
+	{
+		if (ft_strnstr(info->in_cmd[i], "\\", ft_strlen(info->in_cmd[i] + 1)))
+			info->in_cmd[i] = ft_strtrim(info->in_cmd[i], "\\");
+		if (!info->in_cmd[i])
+			print_error("malloc", 0, info);
+	}
+	i = -1;
+	while (info->out_cmd[++i])
+	{
+		if (ft_strnstr(info->out_cmd[i], "\\", ft_strlen(info->out_cmd[i] + 1)))
+			info->out_cmd[i] = ft_strtrim(info->out_cmd[i], "\\");
+		if (!info->out_cmd[i])
+			print_error("malloc", 0, info);
+	}
+	i = -1;*/
 	while (envp[++i])
 	{
 		if (ft_strncmp(envp[i], "PATH=", 5) == 0)

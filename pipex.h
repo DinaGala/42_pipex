@@ -57,7 +57,8 @@ void print_error(char *message, int flag, t_pipe *info); //- function that uses 
 void    initialize_tpipe(t_pipe *info);
 void    clean_up(t_pipe *info); // check if i should allocate the cmd
 char	*check_access(char **paths, char *cmd, t_pipe *info); //USES STRJOIN, strchr compile with libft
-
+char	*ft_substr_slash(char const *s, unsigned int start, size_t len);
+//void	trim_slashes(t_pipe info, int i);
 //char	*ft_trim(char *cmd); //trims \ " ' 
 
 
