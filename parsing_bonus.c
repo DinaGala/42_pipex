@@ -6,11 +6,11 @@
 /*   By: nzhuzhle <nzhuzhle@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/11 22:04:32 by nzhuzhle          #+#    #+#             */
-/*   Updated: 2023/09/26 21:34:31 by nzhuzhle         ###   ########.fr       */
+/*   Updated: 2023/09/26 20:33:55 by nzhuzhle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "pipex_bonus.h"
 
 char	**ft_split_path(t_pipe *info, char *s, int n, int i)
 {
