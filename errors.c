@@ -47,6 +47,8 @@ void	clean_up(t_pipe *info)
 	if (info && info -> path2)
 		free(info->path2);
 //	printf("after path2 %d\n", 3); //erase
+	if (info && info -> paths)
+		ft_free(info -> paths, -1);
 	if (info && info -> in_cmd)
 		ft_free(info -> in_cmd, -1);
 	if (info && info -> out_cmd)
@@ -83,8 +85,8 @@ char	*check_access(char **paths, char *cmd, t_pipe *info)
 		{
 			if(access(p, X_OK) != 0)
 			{
-				ft_free(paths, -1);
-				print_error(strerror(126), 126, info);
+	//			ft_free(paths, -1);
+				print_error(ft_strjoin(cmd, ": Permission denied"), 126, info);
 			}
 			else
 			{

@@ -74,8 +74,16 @@ void	check_paths(t_pipe *info, char **cmd, char **path)
 {
 	//first checking the scripts
 //	printf("entering checking path: %s\n", *path); //erase
-	if ((cmd[0][0] == '.' && cmd[0][1] == '/'))
-		*path = ft_strdup(cmd[0]);//crazy stuff
+	if (ft_strchr(cmd[0], '/'))
+	{
+		if (access(cmd[0], F_OK) == 0)
+		{
+			if(access(cmd[0], X_OK) != 0)
+				print_error(ft_strjoin(cmd[0], ": Permission denied"), 126, info);
+			*path = ft_strdup(cmd[0]);//crazy stuff
+		}
+	//	check_access(path, cmd[0], info);
+	}
 	else
 		*path = ft_strdup(check_access(info->paths, cmd[0], info));
 //	printf("after checking 1st path: %s\n", *path); //erase
