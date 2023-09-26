@@ -6,36 +6,29 @@
 /*   By: nzhuzhle <nzhuzhle@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/11 22:04:32 by nzhuzhle          #+#    #+#             */
-/*   Updated: 2023/09/17 16:26:10 by nzhuzhle         ###   ########.fr       */
+/*   Updated: 2023/09/26 20:33:55 by nzhuzhle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-char	**ft_split_path(t_pipe *info, char *s, char c, int i)
+char	**ft_split_path(t_pipe *info, char *s, int n, int i)
 {
 	char	**arr;
-	int		n;
 	int		start;
 
-	n = -1;
-	arr = (char **) malloc((count_words(s, c) + 1) * sizeof(char *));
-//	printf("split path, path %s\n", s); //erase
-//	printf("split path, count words %d\n", count_words(s, c)); //erase
+	arr = (char **) malloc((count_words(s, ':') + 1) * sizeof(char *));
 	if (arr == 0)
 		print_error("malloc", 0, info);
 	while (*s && s[++i])
 	{
-		if (s[i] != c && i == 0)
+		if (s[i] != ':' && i == 0)
 			start = i;
-		else if (s[i] != c && i > 0 && s[i - 1] == c)
+		else if (s[i] != ':' && i > 0 && s[i - 1] == ':')
 			start = i;
-		if (s[i] != c && (s[i + 1] == c || s[i + 1] == '\0'))
+		if (s[i] != ':' && (s[i + 1] == ':' || s[i + 1] == '\0'))
 		{
-		//	printf("split path, string place %s\n", s + i); //erase
-		//	printf("split path, start %i --- n %i\n", start, n);
 			arr[++n] = ft_substr_path(s, start, (i - start + 1));
-	//		printf("split path, part %s\n", arr[n]); //erase
 			if (!arr[n] && n > 0)
 			{
 				ft_free(arr, n);
@@ -44,31 +37,26 @@ char	**ft_split_path(t_pipe *info, char *s, char c, int i)
 		}
 	}
 	arr[++n] = NULL;
-//	printf("split path, last part %s\n", arr[n]); //erase
 	return (arr);
 }
 
-char	**ft_split_cmd(t_pipe *info, char *s, char c, int i)
+char	**ft_split_cmd(t_pipe *info, char *s, int n, int i)
 {
 	char	**arr;
-	int		n;
 	int		start;
 
-	n = -1;
-//	printf("I'm in the split cmd %d\n", n); //erase
-	arr = (char **) malloc((count_words(s, c) + 1) * sizeof(char *));
+	arr = (char **) malloc((count_words(s, ' ') + 1) * sizeof(char *));
 	if (arr == 0)
 		print_error("malloc", 0, info);
 	while (*s && s[++i])
 	{
-		if (s[i] != c && i == 0)
+		if (s[i] != ' ' && i == 0)
 			start = i;
-		else if (s[i] != c && i > 0 && s[i - 1] == c)
+		else if (s[i] != ' ' && i > 0 && s[i - 1] == ' ')
 			start = i;
-		if (s[i] != c && (s[i + 1] == c || s[i + 1] == '\0'))
+		if (s[i] != ' ' && (s[i + 1] == ' ' || s[i + 1] == '\0'))
 		{
 			arr[++n] = ft_substr(s, start, (i - start + 1));
-//			printf("part: %s\n", arr[n]); //erase
 			if (!arr[n] && n > 0)
 			{
 				ft_free(arr, n);
@@ -79,76 +67,61 @@ char	**ft_split_cmd(t_pipe *info, char *s, char c, int i)
 	arr[++n] = NULL;
 	return (arr);
 }
-/*if c = '\'' || c = '\""*/
-char	**ft_split_quotes(t_pipe *info, char *s, char c, int i)
+
+char	**ft_split_quotes(t_pipe *info, char *s, char c)
 {
 	char	**arr;
-	int		n;
-	int		start;
-	int		flag;
 
-	n = -1;
+	info -> n = -1;
+	info -> i = -1;
 	arr = (char **) malloc((count_cmd(s, c) + 1) * sizeof(char *));
-	//printf("I'm in the split quotes %d\n", count_cmd(s, c)); //erase
 	if (arr == 0)
 		print_error("malloc", 0, info);
-	flag = 0;
-	while (*s && s[++i])
+	info -> flag = 0;
+	return (ft_pop_quotes(info, s, c, arr));
+}
+
+char	**ft_pop_quotes(t_pipe *info, char *s, char c, char **arr)
+{
+	while (*s && s[++info->i])
 	{
-		if ((s[i] == c && i == 0) || \
-		(s[i] == c && s[i - 1] == ' ' && flag == 0 && i > 0))
+		ft_start_quotes(info, s, c);
+		if ((s[info->i] != ' ' && (s[info->i + 1] == ' ' || !s[info->i + 1]) \
+					&& info->flag == 0) || (s[info->i] == c \
+						&& (s[info->i + 1] == ' ' || !s[info->i + 1]) && \
+						info->flag == 1 && s[info->i - 1] != '\\'))
 		{
-			flag = 1;
-			start = i + 1;
-		}
-		else if (i == 0 && s[i] != ' ')
-			start = i;
-		else if (s[i] != ' ' && !flag && i > 0 && s[i - 1] == ' ')
-			start = i;
-//		printf("start is %d\n", start); //erase
-		if ((s[i] != ' ' && (s[i + 1] == ' ' || !s[i + 1]) && flag == 0) || \
-		(s[i] == c && (s[i + 1] == ' ' || !s[i + 1]) && flag == 1 && s[i - 1] != '\\'))
-		{
-		//	printf("flag is %d\n", flag); //erase
-			if (flag == 1)
-				arr[++n] = ft_substr_slash(s, start, (i - start));
+			if (info->flag == 1)
+				arr[++info->n] = ft_substr_slash(s, info->start, \
+						(info->i - info->start), -1);
 			else
-				arr[++n] = ft_substr_slash(s, start, (i - start + 1));
-			if (!arr[n] && n > 0)
+				arr[++info->n] = ft_substr_slash(s, info->start, \
+						(info->i - info->start + 1), -1);
+			if (!arr[info->n] && info->n > 0)
 			{
-				ft_free(arr, n);
+				ft_free(arr, info->n);
 				print_error("malloc", 0, info);
 			}
-			if (flag == 1)
-				flag = 0;
-		//	printf("part: %s\n", arr[n]); //erase
+			if (info->flag == 1)
+				info->flag = 0;
 		}
 	}
-	arr[++n] = NULL;
-	//printf("salgo de split quotes: %s\n", arr[n]); //erase
+	arr[++info->n] = NULL;
 	return (arr);
 }
 
-int	count_cmd(char *s, char c)
+void	ft_start_quotes(t_pipe *info, char *s, char c)
 {
-	int	i;
-	int	count;
-
-	i = 0;
-	count = 0;
-	while (s[i])
+	if ((s[info->i] == c && info->i == 0) || \
+		(s[info->i] == c && s[info->i - 1] == ' ' && info->flag == 0 && \
+		info->i > 0))
 	{
-		if (s[i] != ' ' && (s[i + 1] == ' ' || !s[i + 1]))
-			count++;
-		else if (s[i] == ' ' && s[i + 1] == c)
-		{
-			i++;
-			while (s[i] && s[i + 1] != c)
-		   		i++;
-			if (!s[i])
-				return (count);
-		}
-		i++;
+		info->flag = 1;
+		info->start = info->i + 1;
 	}
-	return (count);
+	else if (info->i == 0 && s[info->i] != ' ')
+		info->start = info->i;
+	else if (s[info->i] != ' ' && !info->flag && info->i > 0 && \
+			s[info->i - 1] == ' ')
+		info->start = info->i;
 }

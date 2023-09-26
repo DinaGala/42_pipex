@@ -27,17 +27,6 @@ void	print_error(char *message, int flag, t_pipe *info)
 	exit(errno);
 }
 
-void	initialize_tpipe(t_pipe *info)
-{
-	info -> in_fd = -1;
-	info -> out_fd = -1;
-	info -> paths = NULL;
-	info -> path1 = NULL;
-	info -> path2 = NULL;
-	info -> in_cmd = NULL;
-	info -> out_cmd = NULL;
-}
-
 void	clean_up(t_pipe *info)
 {
 //	printf("I'm in the clean up %d\n", 1); //erase
@@ -57,7 +46,42 @@ void	clean_up(t_pipe *info)
 	info = NULL;
 }
 
-char	*check_access(char **paths, char *cmd, t_pipe *info)
+void	ft_free(char **arr, int n)
+{
+	while (n > 0)
+		free(arr[n--]);
+	if (n == 0)
+		free(arr[n]);
+	if (n < 0)
+	{
+		while (arr[++n])
+			free(arr[n]);
+	}
+	free(arr);
+	arr = NULL;
+}
+
+void	check_access(t_pipe *info, char **cmd, char **path)
+{
+//	printf("entering checking path: %s\n", *path); //erase
+//	first checking the scripts
+	if (ft_strchr(cmd[0], '/'))
+	{
+		if (access(cmd[0], F_OK) == 0)
+		{
+			if(access(cmd[0], X_OK) != 0)
+				print_error(ft_strjoin(cmd[0], ": Permission denied"), 126, info);
+			*path = ft_strdup(cmd[0]);
+		}
+		else
+			print_error(ft_strjoin(cmd[0], ": command not found\n"), 127, info);
+	}
+	else
+		*path = ft_strdup(check_paths(info->paths, cmd[0], info));
+//	printf("after checking 1st path: %s\n", *path); //erase
+}
+
+char	*check_paths(char **paths, char *cmd, t_pipe *info)
 {
 	char	*p;
 	int		i;
@@ -84,10 +108,7 @@ char	*check_access(char **paths, char *cmd, t_pipe *info)
 		if (access(p, F_OK) == 0)
 		{
 			if(access(p, X_OK) != 0)
-			{
-	//			ft_free(paths, -1);
 				print_error(ft_strjoin(cmd, ": Permission denied"), 126, info);
-			}
 			else
 			{
 				//printf("getting away from check access, path %s\n", p); //erase
@@ -98,66 +119,4 @@ char	*check_access(char **paths, char *cmd, t_pipe *info)
 //	printf("getting away from check access with NULL %s\n", NULL); //erase
 	print_error(ft_strjoin(cmd, ": command not found\n"), 127, info);
 	return (NULL);
-}
-
-/*void	trim_slashes(t_pipe info, int i)
-{
-//	int	j;
-
-//	j = -1
-	while (info->in_cmd[++i])
-	{
-//		while (info->in_cmd[i][++j])
-//		{	
-//			if(info->in_cmd[i][j] == '\\' && info->in_cmd[i][j + 1] == "\"")
-		if (ft_strnstr(info->in_cmd[i], "\\\"", ft_strlen(info->in_cmd[i] + 1)))
-			info->in_cmd[i] = ft_strtrim(info->in_cmd[i], "\\");
-		if (!info->in_cmd[i])
-			print_error("malloc", 0, info);
-	}
-	i = -1;
-	while (info->out_cmd[++i])
-	{
-		if (ft_strnstr(info->out_cmd[i], "\\", ft_strlen(info->out_cmd[i] + 1)))
-			info->out_cmd[i] = ft_strtrim(info->out_cmd[i], "\\");
-		if (!info->out_cmd[i])
-			print_error("malloc", 0, info);
-	}
-	i = -1;
-}*/
-
-char	*ft_substr_slash(char const *s, unsigned int start, size_t len)
-{
-	char	*m;
-	size_t	i;
-	size_t	new_len;
-
-	new_len = len;
-	i = 0;
-//	printf("entering cut len is %zu\n", len); //erase
-	while (i < (len - 1) && s[i + start + 1])
-	{
-		if (s[i + start] == '\\' && s[i + start + 1] == '\"')
-			new_len--;
-		i++;
-	}
-	i = 0;
-//	printf("new_len is  %zu\n", new_len); //erase
-	m = (char *) malloc(new_len + 1);
-	if (m == 0)
-		return (NULL);
-	while (i < new_len && s[i + start])
-	{
-		if (s[i + start] == '\\' && s[i + start + 1] == '\"')
-			start++;
-		else
-		{
-			m[i] = s[i + start];
-	//		printf("i copy the  %c\n", s[i + start]);
-			i++;
-		}
-	}
-	m[i] = '\0';
-//	printf("lenth of final substr %zu\n", ft_strlen(m));
-	return (m);
 }

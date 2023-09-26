@@ -18,11 +18,8 @@ void	parent_process(char *envp[], char *argv, t_pipe *info, int fd[])
 	info -> out_fd = open(argv, O_TRUNC | O_CREAT | O_RDWR, 0666);
 //	printf("entering parent, out fd %i\n", info -> out_fd); //erase
 	if (info -> out_fd == -1)
-	{
-	//	print_error(argv, -1, info);
 		print_error(strerror(1), 1, info);
-	}
-	check_paths(info, info->out_cmd, &(info->path2));
+	check_access(info, info->out_cmd, &(info->path2));
 //	printf("parent after checking path: %s\n", info->path2); //erase
 	if (dup2(info->out_fd, STDOUT_FILENO) < 0)
 	{
@@ -33,7 +30,6 @@ void	parent_process(char *envp[], char *argv, t_pipe *info, int fd[])
 	if (dup2(fd[0], STDIN_FILENO) < 0)
 		print_error("dup2 file descriptor", 0, info);
 	close(fd[0]);
-//	execve(info->path2, info->out_cmd, envp);
 	if (execve(info->path2, info->out_cmd, envp) < 0)
 		print_error(info->out_cmd[0], 0, info);
 }
@@ -46,12 +42,9 @@ void	child_process(char *envp[], char *argv, t_pipe *info, int fd[])
 //	printf("entering child, in fd %i\n", info -> in_fd); //erase
 //	printf("before execve path1: %s\n", info->path1);//erase
 	if (info -> in_fd == -1)
-	{
-	//	exit (0);
 		print_error(argv, 0, info);
-	}
 //	printf("child before checking paths %s\n", info -> in_cmd[0]); //erase
-	check_paths(info, info->in_cmd, &(info->path1));
+	check_access(info, info->in_cmd, &(info->path1));
 	if (dup2(info->in_fd, STDIN_FILENO) < 0)
 	{
 		close(info -> in_fd);
@@ -63,81 +56,42 @@ void	child_process(char *envp[], char *argv, t_pipe *info, int fd[])
 	if (dup2(fd[1], STDOUT_FILENO) < 0)
 		print_error("dub2 file descriptor", 0, info);
 	close(fd[1]);
-//	execve(info->path1, info->in_cmd, envp);
 	if (execve(info->path1, info->in_cmd, envp) == -1) //
 		print_error(info->in_cmd[0], 0, info);
-//	if (execve("./script\"quote.sh", info->in_cmd, envp) == -1) //
-//		print_error("cmd1", 0, info);
 }
 
-void	check_paths(t_pipe *info, char **cmd, char **path)
+void	initialize_tpipe(t_pipe *info)
 {
-	//first checking the scripts
-//	printf("entering checking path: %s\n", *path); //erase
-	if (ft_strchr(cmd[0], '/'))
-	{
-		if (access(cmd[0], F_OK) == 0)
-		{
-			if(access(cmd[0], X_OK) != 0)
-				print_error(ft_strjoin(cmd[0], ": Permission denied"), 126, info);
-			*path = ft_strdup(cmd[0]);//crazy stuff
-		}
-	//	check_access(path, cmd[0], info);
-	}
-	else
-		*path = ft_strdup(check_access(info->paths, cmd[0], info));
-//	printf("after checking 1st path: %s\n", *path); //erase
-//	if (!(*path))
-//		print_error("access", 127, info);
-//if (info->out_cmd[0][0] == '.' && info->out_cmd[0][1] == '/')
-//		info->path2 = ft_strdup(info->out_cmd[0]);
-//	else
-//		info->path2 = ft_strdup(check_access(paths, info->out_cmd[0], info));
+	info -> i = -1;
+	info -> n = -1;
+	info -> flag = 0;
+	info -> in_fd = -1;
+	info -> out_fd = -1;
+	info -> paths = NULL;
+	info -> path1 = NULL;
+	info -> path2 = NULL;
+	info -> in_cmd = NULL;
+	info -> out_cmd = NULL;
 }
 
 void	parse_all(char **argv, t_pipe *info, char *envp[], int i)
 {
-//	paths = NULL;
 	initialize_tpipe(info);
-//	info -> in_cmd = ft_split_cmd(info, argv[2], ' ', -1); //you can send here to the decision maker
-//	info -> out_cmd = ft_split_cmd(info, argv[3], ' ', -1);
 //	printf("entering parsing: %s\n", argv[1]); //erase
 	info -> in_cmd = decision_maker(info, argv[2], -1);
 	info -> out_cmd = decision_maker(info, argv[3], -1);
-//	trim_slashes(info, -1);
-/*	while (info->in_cmd[++i])
-	{
-		if (ft_strnstr(info->in_cmd[i], "\\", ft_strlen(info->in_cmd[i] + 1)))
-			info->in_cmd[i] = ft_strtrim(info->in_cmd[i], "\\");
-		if (!info->in_cmd[i])
-			print_error("malloc", 0, info);
-	}
-	i = -1;
-	while (info->out_cmd[++i])
-	{
-		if (ft_strnstr(info->out_cmd[i], "\\", ft_strlen(info->out_cmd[i] + 1)))
-			info->out_cmd[i] = ft_strtrim(info->out_cmd[i], "\\");
-		if (!info->out_cmd[i])
-			print_error("malloc", 0, info);
-	}
-	i = -1;*/
 	while (envp[++i])
 	{
 		if (ft_strncmp(envp[i], "PATH=", 5) == 0)
 		{
 		//	printf("before splitting path: %s\n", envp[i]); //erase
-			info -> paths = ft_split_path(info, envp[i] + 5, ':', -1);
+			info -> paths = ft_split_path(info, envp[i] + 5, -1, -1);
 			break ;
 		}
 	}
 	if (!info->paths)
-		info->paths = ft_split_path(info, DEFPATH, ':', -1);
+		info->paths = ft_split_path(info, DEF, -1, -1);
 //	printf("after splitting path: %s\n", info->paths[1]); //erase
-//	check_paths(info);
-//	printf("after checking path: %s\n", info->paths[1]); //erase
-//	ft_free(paths, -1);
-//	if (info->path1 == NULL || info->path2 == 0)
-//		print_error("access", 127, info);
 }
 
 int	main(int argc, char **argv, char *envp[])
@@ -153,9 +107,7 @@ int	main(int argc, char **argv, char *envp[])
 	info = malloc(sizeof(t_pipe));
 	if (!info)
 		print_error("malloc", 0, NULL);
-//	exit (1); // erase
 	parse_all(argv, info, envp, -1);
-//	exit (1);
 //	printf("cmd2: %s\ncmd2: %s\n", info->out_cmd[0], info->out_cmd[1]);//erase
 //	printf("path1: %s\npath2: %s\n", info->path1, info->path2);//erase
 //	printf("cmd1: %s\ncmd1: %s\n", info->in_cmd[0], info->in_cmd[1]);//erase
@@ -175,7 +127,5 @@ int	main(int argc, char **argv, char *envp[])
 	else
 		parent_process(envp, argv[4], info, fd);
 	waitpid(pid, NULL, 0);
-//	printf("after all: %i\n", 1);//erase
-//	clean_up(info);
 	return (0);
 }
