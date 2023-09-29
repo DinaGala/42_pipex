@@ -29,19 +29,15 @@ void	print_error(char *message, int flag, t_pipe *info)
 
 void	clean_up(t_pipe *info)
 {
-//	printf("I'm in the clean up %d\n", 1); //erase
-	if (info && info->path1 != NULL)
-		free(info->path1);
-//	printf("after path1 %d\n", 2); //erase
-	if (info && info -> path2)
-		free(info->path2);
 //	printf("after path2 %d\n", 3); //erase
 	if (info && info -> paths)
 		ft_free(info -> paths, -1);
-	if (info && info -> in_cmd)
-		ft_free(info -> in_cmd, -1);
-	if (info && info -> out_cmd)
-		ft_free(info -> out_cmd, -1);
+	if (info && info -> str_doc)
+		free(info -> str_doc);
+	if (info -> in_fd)
+		close(info->in_fd);
+	if (info -> out_fd)
+		close(info->out_fd);
 	free(info);
 	info = NULL;
 }
