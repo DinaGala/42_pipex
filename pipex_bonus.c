@@ -40,8 +40,8 @@ void	child_process(char *envp[], char *argv, t_pipe *info, int fd[])
 {
 	char	**cmd;
 	char	*the_path;
-	int	bytes = 0; //erase
-	char	buf[2345]; //erase
+//	int	bytes = 0; //erase
+//	char	buf[2345]; //erase
 
 	the_path = NULL;
 	close(fd[0]);
@@ -53,8 +53,8 @@ void	child_process(char *envp[], char *argv, t_pipe *info, int fd[])
 //	if (info -> in_fd == -1)
 //		print_error(argv, 0, info);
 //	printf("child before checking paths %s\n", info -> in_cmd[0]); //erase
-	bytes = read(info->in_fd, buf, sizeof(buf));
-	printf("inside file desc: %s\n", buf);
+//	bytes = read(info->in_fd, buf, sizeof(buf));
+//	printf("inside file desc: %s\n", buf);
 	check_access(info, cmd, &the_path);
 	if (dup2(info->in_fd, STDIN_FILENO) < 0)
 		print_error("dup2 file descriptor", 0, info);
@@ -108,10 +108,15 @@ void	ft_here_doc(t_pipe *info, char **argv)
 	while (42)
 	{
 		info -> str_doc = get_next_line(0);
+		printf("delimiter: %s strlen %zu\n", argv[2], ft_strlen(argv[2]));//erase
+		printf("line: %s\n", info -> str_doc);//erase
 		if (!info -> str_doc)
 			print_error("get_next_line", 0, NULL);
-		else if (!ft_strncmp(info -> str_doc, argv[2], ft_strlen(info -> str_doc)))
+		else if (!ft_strncmp(info -> str_doc, argv[2], ft_strlen(argv[2])))
+		{	
+			printf("last line: %s\n", info -> str_doc);//erase
 			break ;
+		}
 		write(hd[1], info -> str_doc, ft_strlen(info->str_doc));
 	}
 	free(info -> str_doc);
@@ -128,7 +133,7 @@ int	main(int argc, char **argv, char *envp[])
 	int		i;
 
 	info = NULL;
-	printf("argv text2: %s\n", argv[argc - 1]);//erase
+//	printf("argv text2: %s\n", argv[argc - 1]);//erase
 	if (argc < 5)
 		print_error("invalid arguments: Introduce at least 4 arguments\n", 22, info);
 	info = malloc(sizeof(t_pipe));
@@ -142,7 +147,7 @@ int	main(int argc, char **argv, char *envp[])
 //	printf("cmd2: %s\ncmd2: %s\n", info->out_cmd[0], info->out_cmd[1]);//erase
 //	printf("path1: %s\npath2: %s\n", info->path1, info->path2);//erase
 //	printf("cmd1: %s\ncmd1: %s\n", info->in_cmd[0], info->in_cmd[1]);//erase
-	printf("in fd: %i\nout fd: %i\n", info->in_fd, info->out_fd);//erase
+//	printf("in fd: %i\nout fd: %i\n", info->in_fd, info->out_fd);//erase
 	while (++i < argc - 2)
 	{
 		if (pipe(fd) < 0)
