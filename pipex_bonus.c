@@ -20,7 +20,7 @@ void	parent_process(char *envp[], char *argv, t_pipe *info)
 	the_path = NULL;
 //	close(fd[1]);
 //	info -> out_fd = open(argv, O_TRUNC | O_CREAT | O_RDWR, 0666);
-	printf("entering parent, cmd %s\n", argv); //erase
+//	printf("entering parent, cmd %s\n", argv); //erase
 //	if (info -> out_fd == -1)
 //		print_error(strerror(1), 1, info);
 	cmd = decision_maker(info, argv, -1);
@@ -48,7 +48,7 @@ void	child_process(char *envp[], char *argv, t_pipe *info, int fd[])
 	cmd = decision_maker(info, argv, -1);
 //	printf("entering child, in fd %i\n", info->in_fd); //erase
 //	info -> in_fd = open(argv, O_RDONLY);
-	printf("entering child, cmd %s %s\n", cmd[0], cmd[1]); //erase
+//	printf("entering child, cmd %s %s\n", cmd[0], cmd[1]); //erase
 //	printf("before execve path1: %s\n", info->path1);//erase
 //	if (info -> in_fd == -1)
 //		print_error(argv, 0, info);
@@ -75,14 +75,15 @@ void	initialize_tpipe(t_pipe *info, char *envp[], char **argv, int argc)
 	info -> flag = 0;
 	info -> here_doc = 0;
 	info -> str_doc = NULL;
-	printf("entering initialize, i %i\n", info->i); //erase
+//	printf("entering initialize, i %i\n", info->i); //erase
 	while (envp[info->i] && !ft_strncmp(envp[info->i], "PATH=", 5))
 		info->i++;
 	if (envp[info->i] && ft_strncmp(envp[info->i], "PATH=", 5) == 0)
 		info -> paths = ft_split_path(info, envp[info->i] + 5, -1, -1);
 	else
 		info->paths = ft_split_path(info, DEF, -1, -1);
-	printf("after splitting paths %s\n", info -> paths[0]); //erase
+//	info -> paths = NULL;		
+//	printf("after splitting paths %s\n", info -> paths[0]); //erase
 	info -> i = -1;
 	if (!ft_strncmp(argv[1], "here_doc\0", ft_strlen(argv[1])))
 		info -> here_doc = 1;
@@ -90,13 +91,13 @@ void	initialize_tpipe(t_pipe *info, char *envp[], char **argv, int argc)
 		info -> in_fd = open(argv[1], O_RDONLY);
 	else
 		ft_here_doc(info, argv);
-	printf("here_doc: %i --- in_fd: %i\n", info->here_doc, info->in_fd); //erase
+//	printf("here_doc: %i --- in_fd: %i\n", info->here_doc, info->in_fd); //erase
 	if (info -> in_fd == -1)
 		print_error(argv[1], 0, info);
 	info -> out_fd = open(argv[argc - 1], O_TRUNC | O_CREAT | O_RDWR, 0666);
-	printf("argc: %i --- out_fd: %i\n", argc, info->out_fd); //erase
+//	printf("argc: %i --- out_fd: %i\n", argc, info->out_fd); //erase
 	if (info -> out_fd == -1)
-		print_error(strerror(1), 1, info);
+		print_error(argv[argc - 1], 0, info);
 }
 
 void	ft_here_doc(t_pipe *info, char **argv)
@@ -108,15 +109,14 @@ void	ft_here_doc(t_pipe *info, char **argv)
 	while (42)
 	{
 		info -> str_doc = get_next_line(0);
-		printf("delimiter: %s strlen %zu\n", argv[2], ft_strlen(argv[2]));//erase
-		printf("line: %s\n", info -> str_doc);//erase
+	//	printf("delimiter: %s -- strlen %zu\n", argv[2], ft_strlen(argv[2]));//erase
+	//	printf("gnl: %s -- strlen %zu\n", info -> str_doc, ft_strlen(info -> str_doc)); //erase
+	//	printf("line: %s\n", info -> str_doc);//erase
 		if (!info -> str_doc)
 			print_error("get_next_line", 0, NULL);
-		else if (!ft_strncmp(info -> str_doc, argv[2], ft_strlen(argv[2])))
-		{	
-			printf("last line: %s\n", info -> str_doc);//erase
+		else if (!ft_strncmp(info -> str_doc, argv[2], ft_strlen(info -> str_doc) - 1))
+		//	printf("last line: %s\n", info -> str_doc);//erase
 			break ;
-		}
 		write(hd[1], info -> str_doc, ft_strlen(info->str_doc));
 	}
 	free(info -> str_doc);
@@ -160,7 +160,7 @@ int	main(int argc, char **argv, char *envp[])
 		close (fd[1]);
 		close (info->in_fd);
 		info->in_fd = fd[0];
-		printf("in main after fork i: %i, --- pid: %i\n", i, pid);
+	//	printf("in main after fork i: %i, --- pid: %i\n", i, pid);
 	}
 	waitpid(pid, NULL, 0);
 	parent_process(envp, argv[argc - 2], info);
