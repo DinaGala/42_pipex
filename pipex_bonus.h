@@ -36,6 +36,7 @@ typedef struct s_struct
 	char	*str_doc;
 	int		in_fd;
 	int		out_fd;
+	int		fd[2];
 	char	**paths;
 //	char	**cmds;
 //	char	*path1;
@@ -47,10 +48,10 @@ typedef struct s_struct
 /***** pipex_bonus.c - main, pipex and child/parent processes *****/
 // main
 //void	parse_all(char **argv, t_pipe *info, char *envp[], int i);
-void	initialize_tpipe(t_pipe *info, char *envp[], char **argv, int argc);
+void	initialize_tpipe(t_pipe *info, char *envp[], char **argv);
 void	ft_here_doc(t_pipe *info, char **argv);
-void	parent_process(char *envp[], char *argv, t_pipe *info);
-void	child_process(char *envp[], char *argv, t_pipe *info, int fd[]);
+void	last_child_process(char *envp[], char *argv, t_pipe *info, char *outfile);
+void	child_process(char *envp[], char *argv, t_pipe *info, char *infile);
 /********************************/
 
 /***** aux_bonus.c - functions that are helping to split */
