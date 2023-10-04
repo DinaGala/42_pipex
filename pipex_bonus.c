@@ -21,7 +21,7 @@ void	last_child_process(char *envp[], char *argv, t_pipe *info, char *outfile)
 //	close(fd[1]);
 //	printf("entering parent, in fd %i\n", info->in_fd); //erase
 	cmd = decision_maker(info, argv, -1);
-
+//	check_access(info, cmd, &the_path);
 //	printf("entering parent, in fd %i\n", info->in_fd); //erase
 	if (!info->here_doc)
 		info -> out_fd = open(outfile, O_TRUNC | O_CREAT | O_RDWR, 0666);
@@ -77,7 +77,7 @@ void	child_process(char *envp[], char *argv, t_pipe *info, char *infile)
 //	printf("child before checking paths %s\n", info -> in_cmd[0]); //erase
 //	bytes = read(info->in_fd, buf, sizeof(buf));
 //	printf("inside file desc: %s\n", buf);
-	check_access(info, cmd, &the_path);
+//	check_access(info, cmd, &the_path);
 //	if (info->in_fd != -1)
 //	{
 
@@ -92,6 +92,7 @@ void	child_process(char *envp[], char *argv, t_pipe *info, char *infile)
 	if (dup2(info->fd[1], STDOUT_FILENO) < 0)
 		print_error("dub2 file descriptor", 0, info);
 	close(info->fd[1]);
+	check_access(info, cmd, &the_path);
 //	write(2, "before execve", 13);
 //	printf("child after closing pipe, in pipe %i\n", info->fd[1]); //erase
 //	printf("child after everything: %s\n", cmd[0]); //erase
@@ -107,14 +108,17 @@ void	initialize_tpipe(t_pipe *info, char *envp[], char **argv)
 	info -> here_doc = 0;
 	info -> str_doc = NULL;
 //	printf("entering initialize, i %i\n", info->i); //erase
-	while (envp[info->i] && !ft_strncmp(envp[info->i], "PATH=", 5))
+	while (envp[info->i] && ft_strncmp(envp[info->i], "PATH=", 5))
 		info->i++;
 	if (envp[info->i] && ft_strncmp(envp[info->i], "PATH=", 5) == 0)
+	{
+	//	printf("entering split path %i\n", info->i); //erase
 		info -> paths = ft_split_path(info, envp[info->i] + 5, -1, -1);
+	}
 	else
 		info->paths = ft_split_path(info, DEF, -1, -1);
 //	info -> paths = NULL;		
-//	printf("after splitting paths %s\n", info -> paths[0]); //erase
+	//printf("after splitting paths %s\n", info -> paths[0]); //erase
 	info -> i = -1;
 	info -> in_fd = -1;
 	if (!ft_strncmp(argv[1], "here_doc\0", ft_strlen(argv[1])))
@@ -179,6 +183,7 @@ int	main(int argc, char **argv, char *envp[])
 	t_pipe	*info;
 	int		pid;
 	int		i;
+	int		exit_status;
 
 	info = NULL;
 	if (argc < 5)
@@ -191,6 +196,7 @@ int	main(int argc, char **argv, char *envp[])
 		i = 1;
 	else
 		i = 2;
+	info->j = i;
 	while (++i < argc - 1)
 	{
 		if (i < argc - 2)
@@ -210,8 +216,12 @@ int	main(int argc, char **argv, char *envp[])
 		info->in_fd = info->fd[0];
 	//	printf("in main after fork i: %i, --- pid: %i\n", i, pid);
 	}
-//	waitpid(pid, NULL, 0);
+	while (++info->j < argc - 1)
+	{
+		if (waitpid(-1, &info->status, 0) == pid)
+			exit_status = WEXITSTATUS(info->status);
+	}
 	clean_up(info);  
 //	parent_process(envp, argv[argc - 2], info);
-	return (0);
+	return (exit_status);
 }

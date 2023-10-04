@@ -32,6 +32,8 @@ typedef struct s_struct
 	int		n;
 	int		flag;
 	int		start;
+	int		j;
+	int		status;
 	int		here_doc;
 	char	*str_doc;
 	int		in_fd;

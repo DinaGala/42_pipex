@@ -78,6 +78,7 @@ void	check_access(t_pipe *info, char **cmd, char **path)
 	}
 	else
 		*path = ft_strdup(check_paths(info->paths, cmd[0], info));
+//	printf("after checking 1st path: %s\n", *path); //erase
 }
 
 char	*check_paths(char **paths, char *cmd, t_pipe *info)
@@ -86,22 +87,36 @@ char	*check_paths(char **paths, char *cmd, t_pipe *info)
 	int		i;
 
 	i = -1;
+
+//	while (paths[++i])
+//	{
+//		printf("what s in the path %i -- %s\n", i, paths[i]); //erase
+//	}
+//	i = -1;
 	while (paths[++i])
 	{
+	//	printf("check access, path %i -- %s\n", i, paths[i]); //erase
 		p = ft_strjoin(paths[i], cmd);
+	//	printf("check access, path+cmd %s\n", p); //erase
 		if (!p)
 		{
 			ft_free(paths, -1);
 			print_error("malloc", 0, info);
 		}
+	//	printf("check access, access F %i -- accessX %i\n", access(p, F_OK), access(p, X_OK)); //erase
+	//	printf("check access, p is %s\n", p); //erase
 		if (access(p, F_OK) == 0)
 		{
 			if(access(p, X_OK) != 0)
 				print_error(ft_strjoin(cmd, ": Permission denied"), 126, info);
 			else
+			{
+				//printf("getting away from check access, path %s\n", p); //erase
 				return (p);
+			}
 		}
 	}
+//	printf("getting away from check access with NULL %s\n", NULL); //erase
 	print_error(ft_strjoin(cmd, ": command not found\n"), 127, info);
 	return (NULL);
 }
