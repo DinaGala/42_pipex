@@ -23,19 +23,23 @@ void	last_child_process(char *envp[], char *argv, t_pipe *info, char *outfile)
 	cmd = decision_maker(info, argv, -1);
 //	check_access(info, cmd, &the_path);
 //	printf("entering parent, in fd %i\n", info->in_fd); //erase
-	if (!info->here_doc)
-		info -> out_fd = open(outfile, O_TRUNC | O_CREAT | O_RDWR, 0666);
-	else
-		info -> out_fd = open(outfile, O_APPEND | O_CREAT | O_RDWR, 0666);
+//	if (!info->here_doc)
+	info -> out_fd = open(outfile, O_TRUNC | O_CREAT | O_RDWR, 0666);
+//	else
+//		info -> out_fd = open(outfile, O_APPEND | O_CREAT | O_RDWR, 0666);
 //	printf("entering parent, fd %i\n", info ->out_fd); //erase
 	if (info -> out_fd == -1)
 		print_error(outfile, 0, info);
+//	{	write(2, "pipex: ", 7);
+//		perror(outfile);
+//	}
 //	else
 //	{
-	if (dup2(info->out_fd, STDOUT_FILENO) < 0)
-		print_error("dup2 file descriptor", 0, info);
+		if (dup2(info->out_fd, STDOUT_FILENO) < 0)
+			print_error("dup2 file descriptor", 0, info);
+//	}
 //		print_error("pipex: text: No such file or directory", 0, info);
-//		
+//	print_error(outfile, 0, info);
 	close(info->out_fd);
 //	}
 //		perror(outfile);
@@ -167,15 +171,22 @@ void	ft_here_doc(t_pipe *info, char **argv)
 	//	printf("line: %s\n", info -> str_doc);//erase
 		if (!info -> str_doc)
 			print_error("get_next_line", 0, NULL);
-		else if (!ft_strncmp(info -> str_doc, argv[2], ft_strlen(info -> str_doc) - 1))
-		//	printf("last line: %s\n", info -> str_doc);//erase
+		else if (!ft_strncmp(info -> str_doc, argv[2], ft_strlen(info -> str_doc) - 1) \
+		&& (ft_strncmp(info -> str_doc, "\n", 1)))
+			break ;
+		else if (!ft_strncmp(info -> str_doc, "\n", 1) && (*argv[2] == '\0'))
 			break ;
 		write(hd[1], info -> str_doc, ft_strlen(info->str_doc));
+		free(info -> str_doc);
+		info -> str_doc = NULL;
 	}
-	free(info -> str_doc);
+	if (info -> str_doc)
+		free(info -> str_doc);
 	info -> str_doc = NULL;
 	close(hd[1]);
 	info -> in_fd = hd[0];
+	//	printf("last line: %s\n", info -> str_doc);//erase
+
 }
 
 int	main(int argc, char **argv, char *envp[])

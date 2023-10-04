@@ -24,7 +24,9 @@ void	print_error(char *message, int flag, t_pipe *info)
 		write(2, message, ft_strlen(message));
 		exit(flag);
 	}
-	exit(errno);
+	if (errno == 13)
+		exit (1);
+	exit (errno);
 }
 
 void	clean_up(t_pipe *info)
