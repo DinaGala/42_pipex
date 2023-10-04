@@ -17,6 +17,11 @@ FLAGS = -Wall -Wextra -Werror -MMD -I ./
 SRC = pipex.c aux.c errors.c parsing.c
 OBJ = $(SRC:.c=.o)
 DEPS = $(SRC:.c=.d)
+
+SRC_BONUS = pipex_bonus.c aux_bonus.c errors_bonus.c parsing_bonus.c
+OBJ_BONUS = $(SRC_BONUS:.c=.o)
+DEPS_BONUS = $(SRC_BONUS:.c=.d)
+
 SRC_LIBFT = ./libft/libft.a
 MAKE_LIBFT = make -C libft
 
@@ -32,8 +37,12 @@ make_lib:
 $(NAME): $(OBJ) $(SRC_LIBFT)
 	$(CC) $(FLAGS) $(OBJ) $(SRC_LIBFT) -o $(NAME)
 
+-include $(DEPS_BONUS)
+bonus: make_lib $(OBJ_BONUS) $(SRC_LIBFT)
+	$(CC) $(FLAGS) $(OBJ_BONUS) $(SRC_LIBFT) -o $(NAME)
+
 clean:
-	rm -f $(OBJ) $(DEPS)
+	rm -f $(OBJ) $(DEPS) $(OBJ_BONUS) $(DEPS_BONUS)
 	$(MAKE_LIBFT) clean
 
 fclean: clean
