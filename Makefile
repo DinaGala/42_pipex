@@ -6,7 +6,7 @@
 #    By: nzhuzhle <nzhuzhle@student.42barcel>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/06 17:34:16 by nzhuzhle          #+#    #+#              #
-#    Updated: 2023/09/14 17:47:39 by nzhuzhle         ###   ########.fr        #
+#    Updated: 2023/10/05 18:25:26 by nzhuzhle         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,7 +18,8 @@ SRC = pipex.c aux.c errors.c parsing.c
 OBJ = $(SRC:.c=.o)
 DEPS = $(SRC:.c=.d)
 
-SRC_BONUS = pipex_bonus.c aux_bonus.c errors_bonus.c parsing_bonus.c
+SRC_BONUS = pipex_bonus.c aux_bonus.c errors_bonus.c parsing_bonus.c \
+			initialize_bonus.c
 OBJ_BONUS = $(SRC_BONUS:.c=.o)
 DEPS_BONUS = $(SRC_BONUS:.c=.d)
 
@@ -46,7 +47,7 @@ clean:
 	$(MAKE_LIBFT) clean
 
 fclean: clean
-	rm -f $(NAME)
+	rm -f $(NAME) .bonus
 	$(MAKE_LIBFT) fclean
 
 re: fclean all

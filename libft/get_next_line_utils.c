@@ -22,7 +22,7 @@ int	check_line(t_list *node, long *lenth)
 	while (node->content[i] && node->content[i] != '\n')
 		i++;
 	if (node->content[i] == '\n')
-	{	
+	{
 		*lenth += ++i;
 		return (1);
 	}
