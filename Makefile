@@ -38,16 +38,20 @@ make_lib:
 $(NAME): $(OBJ) $(SRC_LIBFT)
 	$(CC) $(FLAGS) $(OBJ) $(SRC_LIBFT) -o $(NAME)
 
+bonus:  make_lib .bonusp
+
 -include $(DEPS_BONUS)
-bonus: make_lib $(OBJ_BONUS) $(SRC_LIBFT)
+.bonusp: $(OBJ_BONUS) $(SRC_LIBFT)
 	$(CC) $(FLAGS) $(OBJ_BONUS) $(SRC_LIBFT) -o $(NAME)
+	@touch .bonusp
 
 clean:
 	rm -f $(OBJ) $(DEPS) $(OBJ_BONUS) $(DEPS_BONUS)
 	$(MAKE_LIBFT) clean
 
 fclean: clean
-	rm -f $(NAME) .bonus
+	rm -f $(NAME) 
+	rm -f .bonusp
 	$(MAKE_LIBFT) fclean
 
 re: fclean all
