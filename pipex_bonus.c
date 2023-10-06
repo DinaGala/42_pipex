@@ -56,7 +56,7 @@ void	child_process(char *envp[], char *argv, t_pipe *info, char *infile)
 		print_error(cmd[0], 0, info);
 }
 
-/* Pipex - is the main function of the programm. It opens as many pipes ans processes, as we receive arguments, 
+/* Pipex - is the main function of the program. It opens as many pipes ans processes, as we receive arguments, 
 waits for every process to finish and handles error codes, using WEXITSTATUS */
 
 void	pipex(int argc, char **argv, char *envp[], t_pipe *info)
