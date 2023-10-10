@@ -46,6 +46,7 @@ void	ft_here_doc(t_pipe *info, char **argv)
 		print_error("pipe", 0, info);
 	while (42)
 	{
+		write(1, "> ", 2);
 		info -> str_doc = get_next_line(0);
 		if (!info -> str_doc)
 			print_error("get_next_line", 0, NULL);
